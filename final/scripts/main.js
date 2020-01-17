@@ -2,34 +2,80 @@
 
 const notificationButton = document.getElementById('enableNotifications');
 let swRegistration = null;
+const TokenElem = document.getElementById('token');
+const ErrElem = document.getElementById('err');
 
+// Initialize Firebase
+// TODO: Replace with your project's customized code snippet
+const config = {
+  apiKey: 'AIzaSyAuRduOKK2DnRjow0AEOVXxT13xDkK8Vto',
+  authDomain: 'angular-pwa-push.firebaseapp.com',
+  databaseURL: 'https://angular-pwa-push.firebaseio.com',
+  projectId: 'angular-pwa-push',
+  storageBucket: 'angular-pwa-push.appspot.com',
+  messagingSenderId: '937961744284',
+  appId: '1:937961744284:web:8f37e23063da28e7750a59',
+  measurementId: 'G-9T7FT0GCYZ'
+};
+firebase.initializeApp(config);
+const messaging = firebase.messaging();
 initializeApp();
+
+
 
 function initializeApp() {
   if ('serviceWorker' in navigator && 'PushManager' in window) {
     console.log('Service Worker and Push is supported');
+    initializeUi();
+    initializeFCM();
 
     //Register the service worker
-    navigator.serviceWorker
-      .register('./sw.js')
-      .then(swReg => {
-        console.log('Service Worker is registered', swReg);
-
-        swRegistration = swReg;
-        initializeUi();
-      })
-      .catch(error => {
-        console.error('Service Worker Error', error);
-      });
+    // navigator.serviceWorker
+    //   .register('../../firebase-messaging-sw.js')
+    //   .then(swReg => {
+    //     console.log('Service Worker is registered', swReg);
+    //     swRegistration = swReg;
+    //   })
+    //   .catch(error => {
+    //     console.error('Service Worker Error', error);
+    //   });
+    navigator.serviceWorker.ready
+    .then(function(registration) {
+      console.log('A service worker is active:', registration.active);
+  
+      // At this point, you can call methods that require an active
+      // service worker, like registration.pushManager.subscribe()
+    });
   } else {
     console.warn('Push messaging is not supported');
     notificationButton.textContent = 'Push Not Supported';
-  }
-}
+  }    
+};
+ 
 
 function initializeUi() {
   notificationButton.addEventListener('click', () => {
     displayNotification();
+  });
+}
+
+function initializeFCM() {
+  messaging
+  .requestPermission()
+  .then(() => {
+    console.log('Notification permission granted.');
+
+    // get the token in the form of promise
+    return messaging.getToken();
+  })
+  .then(token => {
+    TokenElem.innerHTML = 'token is : ' + token;
+    //console.log('subscribe...');
+    //subscribeTokenToTopic(token, 'allUsers');
+  })
+  .catch(err => {
+    ErrElem.innerHTML = ErrElem.innerHTML + '; ' + err;
+    console.log('Unable to get permission to notify.', err);
   });
 }
 
