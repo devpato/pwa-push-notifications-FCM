@@ -1,11 +1,14 @@
 <html>
   <head>
-    <title></title>
+    <title>PWA with FCM</title>
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-messaging.js"></script>
     <style>
       .container {
         height: 100vh;
         width: 100%;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
       }
@@ -23,6 +26,11 @@
   <body>
     <div class="container">
       <button id="enableNotifications">🔔 Enable Notification</button>
+      <br/> <br/>
+      <div>
+        <div id="token"></div>
+        <div id="err"></div>
+      </div>
     </div>
     <script src="scripts/main.js"></script>
   </body>
